@@ -1,0 +1,90 @@
+.TH "astat" "1" "2012" "astat" "Utils"
+.SH "NAME"
+astat \- Report CPU and IO statistics
+.SH SYNOPSIS
+.ft B
+.B astat
+.RB [ "\-d delay" ]
+.RI [ blockdev " [ " blockdev " ]" ]
+.SH DESCRIPTION
+\fBastat\fP reports information about processes, CPU, memory, and block IO.
+
+The report repeats every \fBdelay\fP seconds.  Block IO rates and memory sizes
+are reported in MiB.  CPU usage is reported as percentages of a single core
+across the entire SMP system, so for example on a four-core SMP the "user",
+"nice", "system", "idle", "iowait", and "steal" columns will sum to 400. 
+
+By default all block devices on the system are reported.  The user can specify a
+smaller set on the command line if desired.  Either \fB/dev/sda\fP or \fBsda\fP
+is supported.  The block device names must be the ones present in
+\fB/sys/class/block\fP.  The device list can include partitions as well as
+parent block devices.  Some small inaccuracies can be expected for partitions
+due to IO coalescing done at the block device rather than the partition level;
+see \fBlinux/Documentation/iostats.txt\fP for more details.
+
+.SH OPTIONS
+The \fB-d\fP
+.I delay
+option specifies the delay between updates in seconds.  If no delay is given,
+a default of one second is used.  Only integer delays are supported.
+
+.SH FIELD DESCRIPTIONS
+
+.SS
+.B "Processes and Interrupts"
+.nf
+ru: Number of processes running or waiting for runtime.
+bl: Number of processes in uninterruptible sleep.
+intr: Number of interrupts processed.
+ctxsw: Number of context switches.
+.fi
+.PP
+.SS
+.B "CPU"
+.nf
+usr: Time spent running non\-kernel code.
+nic: Time spent running niced processes.
+sys: Time spent running kenerl code.
+idl: Time spent idle.
+iow: Time spent waiting for I/O to complete.
+stl: Time stolen from a virtual machine.
+.fi
+.PP
+.SS
+.B "Memory"
+All values are given in megabytes (MiB).
+.nf
+free: Free memory.
+buff: Buffers.
+cach: Cache memory.
+actv: Active memory.
+mlck: mlock(2)ed memory.
+drty: Dirty memory.
+wrbk: Memory waiting for writeback to block device.
+.fi
+.PP
+.SS
+.B "Block Devices"
+.nf
+dev: Block device name
+rd: Number of read IO operations completed.
+rMB: Size of reads completed.
+wr: Number of write IO operations completed.
+wMB: Size of writes completed.
+io%: Percentage of time device was busy (had at least one IO request
+outstanding).
+avgms: Average IO completion time, in milliseconds.
+depth: Instantaneous queue depth.
+.fi
+
+.SH "SEE ALSO"
+.BR iostat (1),
+.BR vmstat (8),
+.BR sar (1),
+.BR top (1)
+.P
+.SH BUGS
+Symmetric Multithreading (SMT) and CPU clock scaling can affect the practical
+accuracy of measuring "CPU utilization" based on scheduler timing.
+.SH AUTHORS
+Written by Andy Isaacson <adi@hexapodia.org>.
