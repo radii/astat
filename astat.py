@@ -7,6 +7,9 @@
 
 import os, sys, time, getopt
 
+import signal
+signal.signal(signal.SIGINT, signal.SIG_DFL)
+
 def read_cpu_stats():
     '''Returns a tuple of integers denoting CPU statistics from /proc/stat.
     The list consists of:
