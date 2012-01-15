@@ -100,7 +100,7 @@ delay = 1
 (opts, args) = getopt.getopt(sys.argv[1:], 'w:')
 for (o, v) in opts:
     if o == '-w':
-        delay = int(v)
+        delay = float(v)
 
 if len(args) == 0:
     blockdevs = sorted(enumerate_blockdevs())
