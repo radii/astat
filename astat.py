@@ -136,17 +136,18 @@ while True:
                   # mlck           drty           wrbk
                     mem[5] / 1024, mem[6] / 1024, mem[7] / 1024)
 
-    print bdhdr
-    for d,v in bd:
-        if v:
-            x = v
-            prev = lastblkdev.get(d)
-            if prev:
-                x = map(lambda a,b:a-b, v, prev)
-            numio = x[0] + x[4]
-            print bdfmt % (d, x[0], x[2] / 1024, x[4], x[6] / 1024,
-                           round(x[9] / 10.), x[10] / (numio or 1), v[8])
-            lastblkdev[d] = v
+    if len(bd) > 0 and bd[0][1]:
+        print bdhdr
+        for d,v in bd:
+            if v:
+                x = v
+                prev = lastblkdev.get(d)
+                if prev:
+                    x = map(lambda a,b:a-b, v, prev)
+                numio = x[0] + x[4]
+                print bdfmt % (d, x[0], x[2] / 1024, x[4], x[6] / 1024,
+                               round(x[9] / 10.), x[10] / (numio or 1), v[8])
+                lastblkdev[d] = v
 
     ts = ' [%.0f]' % (1e6 * (time.time() - t0))
 
