@@ -112,8 +112,8 @@ lastblkdev = {}
 
 cpuhdr = 'ru bl intr ctxsw usr nic sys idl iow stl   free buff cach actv mlck drty wrbk'
 cpufmt = '%2d %2d %4d %5d %3d %3d %3d %3d %3d %3d   %4d %4d %4d %4d %4d %4d %4d'
-bdhdr = 'dev   rd rMB   wr wMB  io% avgms depth'
-bdfmt = '%-3s %4d %3d %4d %3d %3d%% %5d %3d'
+bdhdr = 'dev     rd rMB   wr wMB  io% avgms depth'
+bdfmt = '%-5s %4d %3d %4d %3d %3d%% %5d %3d'
 print cpuhdr
 while True:
     t0 = time.time()
@@ -145,7 +145,7 @@ while True:
                 if prev:
                     x = map(lambda a,b:a-b, v, prev)
                 numio = x[0] + x[4]
-                print bdfmt % (d, x[0], x[2] / 1024, x[4], x[6] / 1024,
+                print bdfmt % (d[-5:], x[0], x[2] / 1024, x[4], x[6] / 1024,
                                round(x[9] / 10.), x[10] / (numio or 1), v[8])
                 lastblkdev[d] = v
 
