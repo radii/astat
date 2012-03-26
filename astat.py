@@ -125,19 +125,20 @@ while True:
         cpud = cpu
     lastcpu = cpu
     bd = [(b, read_blockdev_stats(b)) for b in blockdevs]
-    print ''
-    print cpuhdr
+    o=[]
+    o.append('')
+    o.append(cpuhdr)
                   #     ru       bl     intr    ctxsw      usr      nic
-    print cpufmt % (cpu[9], cpu[10], cpud[6], cpud[7], cpud[0], cpud[1],
+    o.append(cpufmt % (cpu[9], cpu[10], cpud[6], cpud[7], cpud[0], cpud[1],
                   # sys      idl      iow      stl
                     cpud[2], cpud[3], cpud[4], cpud[5],
                   # free           buff           cach           actv
                     mem[0] / 1024, mem[1] / 1024, mem[2] / 1024, mem[4] / 1024,
                   # mlck           drty           wrbk
-                    mem[5] / 1024, mem[6] / 1024, mem[7] / 1024)
+                    mem[5] / 1024, mem[6] / 1024, mem[7] / 1024))
 
     if len(bd) > 0 and bd[0][1]:
-        print bdhdr
+        o.append(bdhdr)
         for d,v in bd:
             if v:
                 x = v
@@ -145,9 +146,10 @@ while True:
                 if prev:
                     x = map(lambda a,b:a-b, v, prev)
                 numio = x[0] + x[4]
-                print bdfmt % (d[-5:], x[0], x[2] / 1024, x[4], x[6] / 1024,
-                               round(x[9] / 10.), x[10] / (numio or 1), v[8])
+                o.append(bdfmt % (d[-5:], x[0], x[2] / 1024, x[4], x[6] / 1024,
+                               round(x[9] / 10.), x[10] / (numio or 1), v[8]))
                 lastblkdev[d] = v
+    sys.stdout.write('\n'.join(o) + '\n')
 
     ts = ' [%.0f]' % (1e6 * (time.time() - t0))
 
