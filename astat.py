@@ -150,6 +150,7 @@ while True:
                                round(x[9] / 10.), x[10] / (numio or 1), v[8]))
                 lastblkdev[d] = v
     sys.stdout.write('\n'.join(o) + '\n')
+    sys.stdout.flush()
 
     ts = ' [%.0f]' % (1e6 * (time.time() - t0))
 
