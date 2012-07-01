@@ -54,13 +54,13 @@ def read_mem_stats():
                         Writeback PageTables Bounce WritebackTmp''')
     v = [x.split() for x in open('/proc/meminfo')]
     v = dict([(x[0][:-1], x[1]) for x in v])
-    return map(lambda k: int(v[k]), keys)
+    return map(lambda k: int(v.get(k, 0)), keys)
 
 def enumerate_blockdevs():
-    '''Returns a list of strings naming block devices in /sys/class/block.
+    '''Returns a list of strings naming block devices in /sys/block.
     Partitions (which contain a 'partition' pseudofile) are not included.
     '''
-    d = '/sys/class/block'
+    d = '/sys/block'
     r = []
     for b in os.listdir(d):
         try:
@@ -72,7 +72,7 @@ def enumerate_blockdevs():
 
 def read_blockdev_stats(b):
     '''Given the name of a blockdev, returns a list of integers denoting IO
-    statistics from /sys/class/block/<b>/stat.  If the blockdev does not
+    statistics from /sys/block/<b>/stat.  If the blockdev does not
     exist (perhaps due to hotunplug), returns None.
 
     The list consists of:
@@ -90,7 +90,7 @@ def read_blockdev_stats(b):
     10 weighted time spent doing IOs (ms)
     '''
     try:
-        f = open('/sys/class/block/%s/stat' % b)
+        f = open('/sys/block/%s/stat' % b)
     except IOError, e:
         return None
     return [int(i) for i in f.read().split()]
