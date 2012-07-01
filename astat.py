@@ -95,6 +95,11 @@ def read_blockdev_stats(b):
         return None
     return [int(i) for i in f.read().split()]
 
+def sector_to_mb(x):
+    '''Given a number of sectors (of 512 bytes), return the equivalent
+    number of MB.'''
+    return x / 2048
+
 delay = 1
 
 (opts, args) = getopt.getopt(sys.argv[1:], 'w:')
@@ -146,8 +151,9 @@ while True:
                 if prev:
                     x = map(lambda a,b:a-b, v, prev)
                 numio = x[0] + x[4]
-                o.append(bdfmt % (d[-5:], x[0], x[2] / 1024, x[4], x[6] / 1024,
-                               round(x[9] / 10.), x[10] / (numio or 1), v[8]))
+                o.append(bdfmt % (d[-5:], x[0], sector_to_mb(x[2]), x[4],
+                               sector_to_mb(x[6]), round(x[9] / 10.),
+                               x[10] / (numio or 1), v[8]))
                 lastblkdev[d] = v
     sys.stdout.write('\n'.join(o) + '\n')
     sys.stdout.flush()
