@@ -101,9 +101,12 @@ def sector_to_mb(x):
     return x / 2048
 
 delay = 1
+o_time = False
 
-(opts, args) = getopt.getopt(sys.argv[1:], 'w:')
+(opts, args) = getopt.getopt(sys.argv[1:], 'tw:')
 for (o, v) in opts:
+    if o == '-t':
+        o_time = True
     if o == '-w':
         delay = float(v)
 
@@ -131,7 +134,10 @@ while True:
     lastcpu = cpu
     bd = [(b, read_blockdev_stats(b)) for b in blockdevs]
     o=[]
-    o.append('')
+    if o_time:
+        o.append('%.3f' % t0)
+    else:
+        o.append('')
     o.append(cpuhdr)
                   #     ru       bl     intr    ctxsw      usr      nic
     o.append(cpufmt % (cpu[9], cpu[10], cpud[6], cpud[7], cpud[0], cpud[1],
