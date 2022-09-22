@@ -1,6 +1,6 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
-# Copyright 2012 Andy Isaacson <adi@hexapodia.org>
+# Copyright 2012, 2022 Andy Isaacson <adi@hexapodia.org>
 #
 # This program is free software, licensed under the GNU GPL version 2.
 # Please see the file COPYING for additional information.
@@ -29,7 +29,7 @@ def read_cpu_stats():
     v = [x.split() for x in open('/proc/stat')]
     v = dict([(x[0], x[1:]) for x in v])
     f = lambda k: int(v[k][0])
-    cpu = map(int, v['cpu'])
+    cpu = list(map(int, v['cpu']))
     return (cpu[0], cpu[1], cpu[2], cpu[3], cpu[4], cpu[5],
             f('intr'), f('ctxt'), f('processes'),
             f('procs_running'), f('procs_blocked'))
@@ -54,7 +54,7 @@ def read_mem_stats():
                         Writeback PageTables Bounce WritebackTmp''')
     v = [x.split() for x in open('/proc/meminfo')]
     v = dict([(x[0][:-1], x[1]) for x in v])
-    return map(lambda k: int(v.get(k, 0)), keys)
+    return list(map(lambda k: int(v.get(k, 0)), keys))
 
 def enumerate_blockdevs():
     '''Returns a list of strings naming block devices in /sys/block.
@@ -65,7 +65,7 @@ def enumerate_blockdevs():
     for b in os.listdir(d):
         try:
             os.stat('%s/%s/partition' % (d, b))
-        except OSError, e:
+        except OSError as e:
             # found a non-partition blockdev!
             r.append(b)
     return r
@@ -91,7 +91,7 @@ def read_blockdev_stats(b):
     '''
     try:
         f = open('/sys/block/%s/stat' % b)
-    except IOError, e:
+    except IOError as e:
         return None
     return [int(i) for i in f.read().split()]
 
@@ -122,13 +122,13 @@ cpuhdr = 'ru bl intr ctxsw usr nic sys idl iow stl   free buff cach actv mlck dr
 cpufmt = '%2d %2d %4d %5d %3d %3d %3d %3d %3d %3d   %4d %4d %4d %4d %4d %4d %4d'
 bdhdr = 'dev     rd rMB   wr wMB  io% avgms depth'
 bdfmt = '%-5s %4d %3d %4d %3d %3d%% %5d %3d'
-print cpuhdr
+print(cpuhdr)
 while True:
     t0 = time.time()
     cpu = read_cpu_stats()
     mem = read_mem_stats()
     if lastcpu:
-        cpud = map(lambda a,b: a-b, cpu, lastcpu)
+        cpud = list(map(lambda a,b: a-b, cpu, lastcpu))
     else:
         cpud = cpu
     lastcpu = cpu
@@ -155,7 +155,7 @@ while True:
                 x = v
                 prev = lastblkdev.get(d)
                 if prev:
-                    x = map(lambda a,b:a-b, v, prev)
+                    x = list(map(lambda a,b:a-b, v, prev))
                 numio = x[0] + x[4]
                 o.append(bdfmt % (d[-5:], x[0], sector_to_mb(x[2]), x[4],
                                sector_to_mb(x[6]), round(x[9] / 10.),
